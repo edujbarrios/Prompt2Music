@@ -2,9 +2,9 @@
 
 Prompt2Music is an open-source web interface for turning free-form musical ideas into structured text-to-music prompts.
 
-The project is being built with [Reflex](https://reflex.dev/) as a small, public, chat-style application written primarily in Python.
+The project is built with [Reflex](https://reflex.dev/) as a small, public, chat-style application written primarily in Python.
 
-> **Project status:** early development. The Reflex baseline and backend integration are in place; the conversational UI is being added incrementally through pull requests.
+> **Project status:** MVP. The chat flow, backend integration, copy action, keyboard submission, examples, tests, and CI are in place. Deployment/polish can continue incrementally through pull requests.
 
 ## Backend
 
@@ -24,15 +24,20 @@ prompt = engine.process(user_text)
 result = format_prompt(prompt)
 ```
 
-## Intended experience
-
-The completed MVP will provide a minimal chat-like workflow:
+## How it works
 
 1. Write a musical idea in natural language.
-2. Submit it from the conversation composer.
+2. Press **Enter** or use the **Send** button. Use **Shift+Enter** for a new line.
 3. Prompt2Music passes the text to `text-to-music-prompt-structurer`.
-4. The structured result is returned as the assistant response.
-5. Copy the resulting prompt or submit another idea.
+4. The backend returns the structured result through `format_prompt()`.
+5. The result appears as the assistant message and can be copied directly.
+6. Submit another idea to continue the conversation.
+
+Example input:
+
+```text
+neo soul with piano, warm breathy female alto vocals in Spanish, nostalgic, 92 bpm
+```
 
 No external AI provider is required for the core transformation.
 
@@ -43,6 +48,7 @@ No external AI provider is required for the core transformation.
 - `text-to-music-prompt-structurer` as the structuring backend
 - pytest for tests
 - Ruff for linting
+- GitHub Actions for CI
 
 ## Local development
 
@@ -57,14 +63,25 @@ uv run reflex run
 
 The development frontend is normally available at `http://localhost:3000`.
 
+Before opening a pull request:
+
+```bash
+uv run ruff check .
+uv run pytest
+```
+
 ## Project structure
 
 ```text
 Prompt2Music/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── prompt2music/
 │   ├── __init__.py
 │   ├── backend.py
-│   └── prompt2music.py
+│   ├── prompt2music.py
+│   └── state.py
 ├── tests/
 ├── rxconfig.py
 ├── pyproject.toml
@@ -75,11 +92,11 @@ Prompt2Music/
 └── README.md
 ```
 
-The codebase will stay intentionally small. Prompt parsing and musical detection belong in the backend library rather than being reimplemented here.
+The codebase stays intentionally small. Prompt parsing and musical detection belong in the backend library rather than being reimplemented here.
 
-## Privacy direction
+## Privacy
 
-The MVP is designed not to persist conversations and not to send prompts to third-party AI services. Prompt transformation happens through the local Python backend library.
+Prompt2Music does not persist conversations in the MVP and does not send prompts to third-party AI services. Prompt transformation happens through the Python backend library.
 
 ## Open source
 
