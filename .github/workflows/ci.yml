@@ -42,21 +42,21 @@ jobs:
       - name: Start Vercel image
         run: docker run --rm -d --name prompt2music-vercel -e PORT=8080 -p 8080:8080 prompt2music-vercel
 
-      - name: Wait for health endpoint
+      - name: Wait for container startup
         shell: bash
         run: |
           for attempt in {1..30}; do
-            if curl --fail --silent --show-error http://127.0.0.1:8080/_health >/dev/null; then
-              echo "Prompt2Music Vercel container is healthy."
+            if curl --fail --silent http://127.0.0.1:8080/_health >/dev/null; then
               exit 0
             fi
             echo "Waiting for container (${attempt}/30)..."
             sleep 2
           done
-
-          echo "Container did not become healthy."
           docker logs prompt2music-vercel
           exit 1
+
+      - name: Smoke-check full deployment
+        run: python scripts/smoke_deployment.py http://127.0.0.1:8080
 
       - name: Show container logs on failure
         if: failure()
