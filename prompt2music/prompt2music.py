@@ -2,50 +2,194 @@
 
 import reflex as rx
 
+from prompt2music.state import ChatState
+
 BACKEND_REPOSITORY = "https://github.com/edujbarrios/text-to-music-prompt-structurer"
 PROJECT_REPOSITORY = "https://github.com/edujbarrios/Prompt2Music"
 
 
-def index() -> rx.Component:
-    """Render the initial Prompt2Music shell."""
-    return rx.center(
-        rx.vstack(
-            rx.heading("Prompt2Music", size="8"),
-            rx.text(
-                "Turn a musical idea into a structured prompt.",
-                color_scheme="gray",
-                size="4",
-            ),
-            rx.text(
-                "The interactive chat experience will be added incrementally.",
-                color_scheme="gray",
-            ),
-            rx.hstack(
-                rx.link("GitHub", href=PROJECT_REPOSITORY, is_external=True),
-                rx.text("·", color_scheme="gray"),
-                rx.link(
-                    "text-to-music-prompt-structurer",
-                    href=BACKEND_REPOSITORY,
-                    is_external=True,
-                ),
-                spacing="3",
-                align="center",
-            ),
-            rx.text(
-                "Backend / structuring engine created by Eduardo J. Barrios (@edujbarrios).",
-                color_scheme="gray",
-                size="2",
-                text_align="center",
-            ),
-            spacing="5",
-            align="center",
-            max_width="48rem",
-            padding="2rem",
+def header() -> rx.Component:
+    """Render the compact project header."""
+    return rx.hstack(
+        rx.link(
+            rx.heading("Prompt2Music", size="5", weight="medium"),
+            href="/",
+            color="inherit",
+            text_decoration="none",
         ),
-        min_height="100vh",
+        rx.spacer(),
+        rx.link("GitHub", href=PROJECT_REPOSITORY, is_external=True, color_scheme="gray"),
+        width="100%",
+        max_width="52rem",
+        padding_x="1.25rem",
+        padding_y="1rem",
+        align="center",
+    )
+
+
+def intro() -> rx.Component:
+    """Render the concise product introduction."""
+    return rx.vstack(
+        rx.heading("Turn an idea into a music prompt.", size="7", text_align="center"),
+        rx.text(
+            "Describe the track you have in mind. Prompt2Music structures the musical "
+            "direction using the open-source backend library created by Eduardo J. Barrios.",
+            color_scheme="gray",
+            size="3",
+            text_align="center",
+            max_width="38rem",
+        ),
+        spacing="3",
+        align="center",
+        padding_top="8vh",
+        padding_bottom="2rem",
+    )
+
+
+def message_bubble(message: dict[str, str]) -> rx.Component:
+    """Render one user or assistant message."""
+    is_user = message["role"] == "user"
+
+    return rx.box(
+        rx.vstack(
+            rx.text(
+                message["content"],
+                white_space="pre-wrap",
+                overflow_wrap="anywhere",
+                font_family=rx.cond(is_user, "inherit", "monospace"),
+                size="3",
+            ),
+            rx.cond(
+                message["role"] == "assistant",
+                rx.button(
+                    "Copy",
+                    variant="ghost",
+                    size="1",
+                    on_click=rx.set_clipboard(message["content"]),
+                    align_self="flex-end",
+                    aria_label="Copy structured prompt",
+                ),
+                rx.fragment(),
+            ),
+            spacing="2",
+            align="stretch",
+            width="100%",
+        ),
+        background=rx.cond(is_user, "var(--gray-3)", "var(--gray-2)"),
+        border="1px solid var(--gray-5)",
+        border_radius="1rem",
+        padding="1rem 1.1rem",
+        max_width=rx.cond(is_user, "82%", "92%"),
+        align_self=rx.cond(is_user, "flex-end", "flex-start"),
+    )
+
+
+def conversation() -> rx.Component:
+    """Render the current conversation."""
+    return rx.vstack(
+        rx.foreach(ChatState.messages, message_bubble),
+        rx.cond(
+            ChatState.processing,
+            rx.hstack(
+                rx.spinner(size="2"),
+                rx.text("Structuring your prompt…", color_scheme="gray", size="2"),
+                spacing="2",
+                align="center",
+                align_self="flex-start",
+            ),
+            rx.fragment(),
+        ),
+        spacing="4",
+        align="stretch",
         width="100%",
     )
 
 
+def composer() -> rx.Component:
+    """Render the message composer."""
+    return rx.vstack(
+        rx.text_area(
+            value=ChatState.input_text,
+            on_change=ChatState.set_input_text,
+            placeholder="Describe the music you imagine…",
+            disabled=ChatState.processing,
+            max_length=2000,
+            rows="2",
+            auto_height=True,
+            resize="none",
+            size="3",
+            width="100%",
+            min_height="4rem",
+            max_height="12rem",
+            aria_label="Describe the music you imagine",
+        ),
+        rx.hstack(
+            rx.text("Your prompts are not persisted.", color_scheme="gray", size="1"),
+            rx.spacer(),
+            rx.button(
+                "Send",
+                on_click=ChatState.submit_prompt,
+                disabled=ChatState.processing,
+                size="2",
+                aria_label="Structure music prompt",
+            ),
+            width="100%",
+            align="center",
+        ),
+        spacing="2",
+        width="100%",
+        background="var(--color-panel-solid)",
+        border="1px solid var(--gray-5)",
+        border_radius="1rem",
+        padding="0.75rem",
+        box_shadow="0 8px 30px rgba(0, 0, 0, 0.06)",
+    )
+
+
+def footer() -> rx.Component:
+    """Render backend attribution and project links."""
+    return rx.flex(
+        rx.text("Powered by ", color_scheme="gray", size="1"),
+        rx.link(
+            "text-to-music-prompt-structurer",
+            href=BACKEND_REPOSITORY,
+            is_external=True,
+            size="1",
+        ),
+        rx.text(" by Eduardo J. Barrios (@edujbarrios)", color_scheme="gray", size="1"),
+        wrap="wrap",
+        justify="center",
+        width="100%",
+        padding_y="1.25rem",
+    )
+
+
+def index() -> rx.Component:
+    """Render the Prompt2Music chat interface."""
+    return rx.box(
+        rx.vstack(
+            header(),
+            rx.vstack(
+                intro(),
+                conversation(),
+                composer(),
+                width="100%",
+                max_width="48rem",
+                padding_x="1.25rem",
+                spacing="5",
+                flex="1",
+            ),
+            footer(),
+            min_height="100vh",
+            width="100%",
+            align="center",
+            spacing="0",
+        ),
+        background="var(--gray-1)",
+        color="var(--gray-12)",
+        min_height="100vh",
+    )
+
+
 app = rx.App()
-app.add_page(index, title="Prompt2Music")
+app.add_page(index, title="Prompt2Music | Structure music prompts")
