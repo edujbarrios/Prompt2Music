@@ -1,0 +1,26 @@
+[project]
+name = "prompt2music"
+version = "0.1.0"
+description = "Open-source Reflex web interface for structuring text-to-music prompts."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MPL-2.0" }
+authors = [
+  { name = "Eduardo J. Barrios" }
+]
+dependencies = [
+  "reflex>=0.9.5,<0.10",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9",
+  "ruff>=0.12,<1",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
