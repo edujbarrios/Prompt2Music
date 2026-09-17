@@ -28,6 +28,11 @@ class ChatState(rx.State):
         self.input_text = value
 
     @rx.event
+    def use_example(self, value: str) -> None:
+        if not self.processing:
+            self.input_text = value
+
+    @rx.event
     def clear_conversation(self) -> None:
         if self.processing:
             return
@@ -35,9 +40,7 @@ class ChatState(rx.State):
         self.messages = []
         self.error = ""
 
-    @rx.event
-    def submit_prompt(self):
-        """Process the current composer text and append the backend response."""
+    def _submit_current_prompt(self):
         text = self.input_text.strip()
         if not text or self.processing:
             return
@@ -58,3 +61,13 @@ class ChatState(rx.State):
             self.messages.append({"role": "assistant", "content": structured})
         finally:
             self.processing = False
+
+    @rx.event
+    def submit_prompt(self):
+        """Submit from non-form UI controls."""
+        yield from self._submit_current_prompt()
+
+    @rx.event
+    def submit_form(self, _form_data: dict[str, str]):
+        """Submit from the composer form (Enter or submit button)."""
+        yield from self._submit_current_prompt()
