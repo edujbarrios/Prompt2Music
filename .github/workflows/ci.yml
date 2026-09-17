@@ -30,17 +30,17 @@ jobs:
       - name: Compile Reflex app
         run: reflex compile
 
-  vercel-container:
+  deployment-container:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build Vercel image
-        run: docker build -f Dockerfile.vercel -t prompt2music-vercel .
+      - name: Build deployment image
+        run: docker build -f Dockerfile.vercel -t prompt2music-deployment .
 
-      - name: Start Vercel image
-        run: docker run --rm -d --name prompt2music-vercel -e PORT=8080 -p 8080:8080 prompt2music-vercel
+      - name: Start deployment image
+        run: docker run --rm -d --name prompt2music-deployment -e PORT=8080 -p 8080:8080 prompt2music-deployment
 
       - name: Wait for container startup
         shell: bash
@@ -52,7 +52,7 @@ jobs:
             echo "Waiting for container (${attempt}/30)..."
             sleep 2
           done
-          docker logs prompt2music-vercel
+          docker logs prompt2music-deployment
           exit 1
 
       - name: Smoke-check full deployment
@@ -60,8 +60,8 @@ jobs:
 
       - name: Show container logs on failure
         if: failure()
-        run: docker logs prompt2music-vercel || true
+        run: docker logs prompt2music-deployment || true
 
       - name: Stop container
         if: always()
-        run: docker stop prompt2music-vercel || true
+        run: docker stop prompt2music-deployment || true

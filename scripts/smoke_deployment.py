@@ -17,7 +17,7 @@ def fetch(url: str) -> tuple[int, str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Smoke-check a Prompt2Music deployment")
-    parser.add_argument("base_url", help="Deployment origin, e.g. https://prompt2music.vercel.app")
+    parser.add_argument("base_url", help="Deployment origin, e.g. https://music.example.com")
     args = parser.parse_args()
 
     base_url = args.base_url.rstrip("/")
