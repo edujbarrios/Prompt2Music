@@ -42,11 +42,22 @@ Caddy serves the pre-built Reflex frontend and proxies Reflex backend endpoints,
 
 The Reflex backend runs with `GRANIAN_WORKERS=1`. Prompt2Music does not persist conversations, so the first public deployment does not require a database or external Redis instance.
 
+## Deployment URL detection
+
+`rxconfig.py` automatically reads Vercel's system environment variables:
+
+1. `VERCEL_PROJECT_PRODUCTION_URL` when available.
+2. `VERCEL_URL` as the preview-deployment fallback.
+
+The hostname is normalized to an HTTPS origin and supplied to Reflex as `deploy_url`. Outside Vercel no override is applied, so local development keeps Reflex's normal defaults.
+
+No Vercel hostname is hard-coded in the repository.
+
 ## Preview deployments
 
 When the Vercel project is connected to this GitHub repository, Vercel creates preview deployments for branches and pull requests and updates production from the configured production branch (normally `main`).
 
-The app intentionally does not hard-code a Vercel hostname. Reflex uses the current HTTPS origin for its backend connection, so preview and production URLs can both use the same image.
+The Reflex backend remains same-origin with the frontend, so preview and production URLs can both use the same image.
 
 ## Local container check
 
@@ -63,6 +74,16 @@ docker run --rm -e PORT=8080 -p 8080:8080 prompt2music-vercel
 ```
 
 Then open `http://localhost:8080`.
+
+## Smoke test
+
+After any deployment, validate the public site with:
+
+```bash
+python scripts/smoke_deployment.py https://your-deployment.vercel.app
+```
+
+The smoke test checks the homepage, the Reflex health endpoint, and Prompt2Music branding.
 
 ## Health endpoint
 
