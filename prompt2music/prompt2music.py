@@ -6,12 +6,28 @@ from prompt2music.state import ChatState
 
 BACKEND_REPOSITORY = "https://github.com/edujbarrios/text-to-music-prompt-structurer"
 PROJECT_REPOSITORY = "https://github.com/edujbarrios/Prompt2Music"
+PAGE_TITLE = "Prompt2Music | Structure music prompts"
+PAGE_DESCRIPTION = (
+    "Turn free-form musical ideas into structured text-to-music prompts with an open-source "
+    "Reflex interface powered by text-to-music-prompt-structurer."
+)
 
 EXAMPLE_PROMPTS = (
     "neo soul with piano, warm breathy female alto vocals in Spanish, nostalgic, 92 bpm",
     "dark dreamy synthwave with 808 bass and female vocals in English",
     "smooth jazz in C# minor with saxophone and piano, intimate and mysterious",
 )
+
+PAGE_META = [
+    {"name": "theme-color", "content": "#111111"},
+    {"name": "robots", "content": "index, follow"},
+    {"property": "og:type", "content": "website"},
+    {"property": "og:title", "content": PAGE_TITLE},
+    {"property": "og:description", "content": PAGE_DESCRIPTION},
+    {"name": "twitter:card", "content": "summary"},
+    {"name": "twitter:title", "content": PAGE_TITLE},
+    {"name": "twitter:description", "content": PAGE_DESCRIPTION},
+]
 
 
 def header() -> rx.Component:
@@ -22,8 +38,18 @@ def header() -> rx.Component:
             href="/",
             color="inherit",
             text_decoration="none",
+            aria_label="Prompt2Music home",
         ),
         rx.spacer(),
+        rx.button(
+            "New chat",
+            variant="ghost",
+            color_scheme="gray",
+            size="1",
+            on_click=ChatState.clear_conversation,
+            disabled=ChatState.processing,
+            aria_label="Clear conversation and start a new chat",
+        ),
         rx.link("GitHub", href=PROJECT_REPOSITORY, is_external=True, color_scheme="gray"),
         width="100%",
         max_width="52rem",
@@ -122,12 +148,17 @@ def conversation() -> rx.Component:
                 spacing="2",
                 align="center",
                 align_self="flex-start",
+                role="status",
+                aria_live="polite",
             ),
             rx.fragment(),
         ),
         spacing="4",
         align="stretch",
         width="100%",
+        role="log",
+        aria_live="polite",
+        aria_label="Prompt2Music conversation",
     )
 
 
@@ -228,4 +259,10 @@ def index() -> rx.Component:
 
 
 app = rx.App()
-app.add_page(index, title="Prompt2Music | Structure music prompts")
+app.add_page(
+    index,
+    title=PAGE_TITLE,
+    description=PAGE_DESCRIPTION,
+    image="/favicon.svg",
+    meta=PAGE_META,
+)
