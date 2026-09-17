@@ -83,7 +83,7 @@ def header() -> rx.Component:
             ),
             rx.link(
                 rx.hstack(
-                    rx.icon("github", size=15),
+                    rx.icon("code", size=15),
                     rx.text("GitHub", display=["none", "block"]),
                     spacing="1",
                     align="center",
@@ -118,18 +118,17 @@ def header() -> rx.Component:
 def trust_row() -> rx.Component:
     """Render compact product promises."""
     return rx.flex(
-        rx.hstack(rx.icon("code-2", size=13), rx.text("Open source", size="1"), spacing="1"),
-        rx.hstack(rx.icon("mouse-pointer-2", size=13), rx.text("No coding", size="1"), spacing="1"),
-        rx.hstack(rx.icon("shield-check", size=13), rx.text("No prompt storage", size="1"), spacing="1"),
-        gap=["0.5rem", "0.75rem"],
+        rx.badge("Open source", variant="soft", color_scheme="gray", radius="full"),
+        rx.badge("No coding", variant="soft", color_scheme="gray", radius="full"),
+        rx.badge("No prompt storage", variant="soft", color_scheme="gray", radius="full"),
+        gap="0.5rem",
         flex_wrap="wrap",
-        justify=["center", "center", "flex-start"],
-        color="var(--gray-10)",
+        justify="center",
     )
 
 
 def examples_panel() -> rx.Component:
-    """Render examples as a distinct desktop panel that remains compact on mobile."""
+    """Render examples as a distinct panel on desktop and a full-width card on mobile."""
     return rx.vstack(
         rx.hstack(
             rx.center(
@@ -164,7 +163,7 @@ def examples_panel() -> rx.Component:
                 cursor="pointer",
                 padding="0.75rem 0.8rem",
                 border="1px solid var(--gray-4)",
-                background="rgba(255, 255, 255, 0.68)",
+                background="rgba(255, 255, 255, 0.7)",
                 style={
                     "transition": "transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease",
                     "_hover": {
@@ -183,7 +182,7 @@ def examples_panel() -> rx.Component:
         padding=["0.8rem", "0.9rem", "1rem"],
         border="1px solid var(--gray-4)",
         border_radius="1.15rem",
-        background="rgba(255,255,255,0.62)",
+        background="rgba(255,255,255,0.64)",
         box_shadow="0 16px 42px rgba(0, 0, 0, 0.045)",
         backdrop_filter="blur(10px)",
     )
@@ -225,7 +224,7 @@ def intro() -> rx.Component:
                 max_width="39rem",
             ),
             spacing="4",
-            align=["center", "center", "start"],
+            align="center",
             width="100%",
             flex="1",
         ),
@@ -233,7 +232,7 @@ def intro() -> rx.Component:
         width="100%",
         max_width="68rem",
         flex_direction=["column", "column", "row"],
-        align_items=["stretch", "stretch", "center"],
+        align_items="center",
         justify_content="space-between",
         gap=["1.5rem", "2rem", "4rem"],
         padding_top=["2.75rem", "6vh", "9vh"],
