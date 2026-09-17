@@ -4,15 +4,20 @@ Open-source web app for turning free-form musical ideas into structured text-to-
 
 **Website:** https://prompt2music.vercel.app
 
+Prompt2Music is designed for **non-technical users, including people with no programming knowledge**. The web interface makes the underlying prompt-structuring engine usable without installing Python, writing code, or working from the command line.
+
 ## How it works
 
 Prompt2Music is the **web interface**. Prompt structuring is provided by [`text-to-music-prompt-structurer`](https://github.com/edujbarrios/text-to-music-prompt-structurer), an open-source Python library created and maintained by **Eduardo J. Barrios (@edujbarrios)**.
+
+The web app is the accessible, no-code way to use the project. Developers can use the Python library directly when they want to integrate the structuring engine into their own tools or workflows.
 
 The app uses the library directly through `MusicPromptEngine` and `format_prompt`; it does not duplicate the parsing logic and does not require an external AI provider.
 
 ## Features
 
 - Chat-style interface built with Reflex
+- Designed for users with zero programming knowledge
 - Structured music prompts from natural-language descriptions
 - Copy-to-clipboard output
 - Keyboard-friendly and responsive UI
