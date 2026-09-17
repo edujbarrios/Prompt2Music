@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest an improvement to Prompt2Music
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prompt2Music is intentionally small. Please explain the user problem before proposing implementation complexity.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: What user need would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest useful version of the change.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Chat UI / UX
+        - Accessibility
+        - Deployment
+        - Documentation
+        - Backend integration
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: backend
+    attributes:
+      label: Backend boundary
+      description: If this changes musical parsing or formatting, explain why it belongs here instead of in text-to-music-prompt-structurer.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and pull requests for similar work.
+          required: true
+        - label: I understand musical detection and formatting logic belongs in text-to-music-prompt-structurer.
+          required: true
