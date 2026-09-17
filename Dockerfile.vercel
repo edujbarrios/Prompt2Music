@@ -1,0 +1,44 @@
+# Prompt2Music on Vercel Fluid Compute.
+# Vercel auto-detects Dockerfile.vercel and deploys it as a container-backed Function.
+
+FROM python:3.13-slim AS builder
+
+COPY --from=ghcr.io/astral-sh/uv:0.12 /uv /bin/uv
+COPY --from=oven/bun:1 /usr/local/bin/bun /usr/local/bin/bun
+ENV UV_COMPILE_BYTECODE=1 UV_NO_CACHE=1 PATH="/app/.venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN uv venv && uv pip install -r requirements.txt
+
+COPY . .
+
+# Compile the static frontend once during image build. Reflex keeps localhost as
+# the default api_url; when served over HTTPS from the same origin it swaps in
+# the public hostname automatically.
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    reflex export --frontend-only --no-zip
+
+FROM python:3.13-slim
+
+COPY --from=caddy:2 /usr/bin/caddy /usr/bin/caddy
+
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    GRANIAN_WORKERS=1 \
+    REFLEX_TELEMETRY_ENABLED=false
+
+WORKDIR /app
+RUN adduser --disabled-password --gecos "" --home /app reflex && chown reflex /app
+
+COPY --chown=reflex --from=builder /app/.venv .venv
+COPY --chown=reflex --from=builder /app/.web/backend .web/backend
+COPY --from=builder /app/.web/build/client /srv
+COPY --chown=reflex . .
+COPY --chown=reflex Caddyfile.vercel /app/Caddyfile.vercel
+
+USER reflex
+
+# Vercel injects PORT at runtime (80 by default for container deployments).
+CMD ["sh", "-c", "caddy start --config /app/Caddyfile.vercel --adapter caddyfile && exec reflex run --env prod --backend-only --backend-port 8000"]
