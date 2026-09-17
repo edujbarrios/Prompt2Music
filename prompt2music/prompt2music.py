@@ -51,7 +51,14 @@ def header() -> rx.Component:
                 disabled=ChatState.processing,
                 aria_label="Clear conversation and start a new chat",
             ),
-            rx.link("GitHub", href=PROJECT_REPOSITORY, is_external=True, color_scheme="gray"),
+            rx.link(
+                "GitHub",
+                href=PROJECT_REPOSITORY,
+                is_external=True,
+                color_scheme="gray",
+                text_decoration="none",
+                aria_label="Open Prompt2Music on GitHub",
+            ),
             width="100%",
             max_width="56rem",
             padding_x=["0.85rem", "1.25rem"],
@@ -62,7 +69,8 @@ def header() -> rx.Component:
         ),
         width="100%",
         border_bottom="1px solid var(--gray-4)",
-        background="var(--gray-1)",
+        background="rgba(250, 250, 250, 0.92)",
+        backdrop_filter="blur(12px)",
         position="sticky",
         top="0",
         z_index="20",
@@ -90,6 +98,12 @@ def intro() -> rx.Component:
             max_width="38rem",
             line_height="1.6",
         ),
+        rx.text(
+            "No setup or programming knowledge required.",
+            color_scheme="gray",
+            size="2",
+            text_align="center",
+        ),
         rx.flex(
             *[
                 rx.button(
@@ -103,6 +117,14 @@ def intro() -> rx.Component:
                     min_height="2.5rem",
                     width=["100%", "auto"],
                     text_align="left",
+                    cursor="pointer",
+                    style={
+                        "transition": "transform 120ms ease, box-shadow 120ms ease",
+                        "_hover": {
+                            "transform": "translateY(-1px)",
+                            "box_shadow": "0 4px 14px rgba(0, 0, 0, 0.06)",
+                        },
+                    },
                 )
                 for example in EXAMPLE_PROMPTS
             ],
@@ -130,20 +152,33 @@ def message_bubble(message: dict[str, str]) -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.text(
+                rx.cond(is_user, "You", "Prompt2Music"),
+                color_scheme="gray",
+                size="1",
+                weight="medium",
+                letter_spacing="0.04em",
+            ),
+            rx.text(
                 message["content"],
                 white_space="pre-wrap",
                 overflow_wrap="anywhere",
                 font_family=rx.cond(is_user, "inherit", "monospace"),
                 size="3",
                 line_height="1.6",
+                width="100%",
             ),
             rx.cond(
                 message["role"] == "assistant",
                 rx.button(
+                    rx.icon("copy", size=14),
                     "Copy",
                     variant="ghost",
+                    color_scheme="gray",
                     size="1",
-                    on_click=rx.set_clipboard(message["content"]),
+                    on_click=[
+                        rx.set_clipboard(message["content"]),
+                        rx.toast.success("Structured prompt copied"),
+                    ],
                     align_self="flex-end",
                     aria_label="Copy structured prompt",
                 ),
@@ -153,10 +188,11 @@ def message_bubble(message: dict[str, str]) -> rx.Component:
             align="stretch",
             width="100%",
         ),
-        background=rx.cond(is_user, "var(--gray-3)", "var(--gray-2)"),
+        background=rx.cond(is_user, "var(--gray-3)", "var(--color-panel-solid)"),
         border="1px solid var(--gray-5)",
         border_radius=["0.9rem", "1rem"],
         padding=["0.85rem 0.9rem", "1rem 1.1rem"],
+        box_shadow=rx.cond(is_user, "none", "0 4px 18px rgba(0, 0, 0, 0.035)"),
         max_width=rx.cond(is_user, "88%", "96%"),
         align_self=rx.cond(is_user, "flex-end", "flex-start"),
     )
@@ -193,6 +229,8 @@ def conversation() -> rx.Component:
 
 def composer() -> rx.Component:
     """Render the keyboard-friendly message composer."""
+    input_is_empty = ChatState.input_text == ""
+
     return rx.form(
         rx.vstack(
             rx.text_area(
@@ -213,20 +251,33 @@ def composer() -> rx.Component:
                 aria_label="Describe the music you imagine",
             ),
             rx.hstack(
-                rx.text(
-                    "Enter to send · Shift+Enter for a new line · prompts are not persisted",
-                    color_scheme="gray",
-                    size="1",
-                    line_height="1.35",
+                rx.box(
+                    rx.text(
+                        "Prompts are not persisted",
+                        color_scheme="gray",
+                        size="1",
+                        line_height="1.35",
+                        display=["block", "block", "none"],
+                    ),
+                    rx.text(
+                        "Enter to send · Shift+Enter for a new line · prompts are not persisted",
+                        color_scheme="gray",
+                        size="1",
+                        line_height="1.35",
+                        display=["none", "none", "block"],
+                    ),
                     flex="1",
                     min_width="0",
                 ),
                 rx.button(
                     "Send",
                     type="submit",
-                    disabled=ChatState.processing,
+                    disabled=ChatState.processing | input_is_empty,
+                    loading=ChatState.processing,
                     size="2",
                     min_width="4.75rem",
+                    radius="full",
+                    high_contrast=True,
                     aria_label="Structure music prompt",
                 ),
                 width="100%",
@@ -242,7 +293,7 @@ def composer() -> rx.Component:
         border="1px solid var(--gray-5)",
         border_radius=["1rem 1rem 0 0", "1rem"],
         padding=["0.65rem 0.65rem max(0.65rem, env(safe-area-inset-bottom))", "0.75rem"],
-        box_shadow="0 8px 30px rgba(0, 0, 0, 0.06)",
+        box_shadow="0 10px 36px rgba(0, 0, 0, 0.08)",
         position="sticky",
         bottom=["0", "1rem"],
         z_index="10",
