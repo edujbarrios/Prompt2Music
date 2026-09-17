@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Backend library issues
+    url: https://github.com/edujbarrios/text-to-music-prompt-structurer/issues
+    about: Report musical detection or prompt-formatting issues in the backend engine repository.
+  - name: Security policy
+    url: https://github.com/edujbarrios/Prompt2Music/security/policy
+    about: Read the security reporting instructions before disclosing a vulnerability.
