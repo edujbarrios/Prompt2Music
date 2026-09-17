@@ -7,6 +7,12 @@ from prompt2music.state import ChatState
 BACKEND_REPOSITORY = "https://github.com/edujbarrios/text-to-music-prompt-structurer"
 PROJECT_REPOSITORY = "https://github.com/edujbarrios/Prompt2Music"
 
+EXAMPLE_PROMPTS = (
+    "neo soul with piano, warm breathy female alto vocals in Spanish, nostalgic, 92 bpm",
+    "dark dreamy synthwave with 808 bass and female vocals in English",
+    "smooth jazz in C# minor with saxophone and piano, intimate and mysterious",
+)
+
 
 def header() -> rx.Component:
     """Render the compact project header."""
@@ -28,7 +34,7 @@ def header() -> rx.Component:
 
 
 def intro() -> rx.Component:
-    """Render the concise product introduction."""
+    """Render the concise product introduction and example prompts."""
     return rx.vstack(
         rx.heading("Turn an idea into a music prompt.", size="7", text_align="center"),
         rx.text(
@@ -38,6 +44,26 @@ def intro() -> rx.Component:
             size="3",
             text_align="center",
             max_width="38rem",
+        ),
+        rx.flex(
+            *[
+                rx.button(
+                    example,
+                    variant="soft",
+                    color_scheme="gray",
+                    size="1",
+                    on_click=ChatState.use_example(example),
+                    white_space="normal",
+                    height="auto",
+                    text_align="left",
+                )
+                for example in EXAMPLE_PROMPTS
+            ],
+            gap="0.5rem",
+            wrap="wrap",
+            justify="center",
+            width="100%",
+            padding_top="0.5rem",
         ),
         spacing="3",
         align="center",
@@ -106,37 +132,47 @@ def conversation() -> rx.Component:
 
 
 def composer() -> rx.Component:
-    """Render the message composer."""
-    return rx.vstack(
-        rx.text_area(
-            value=ChatState.input_text,
-            on_change=ChatState.set_input_text,
-            placeholder="Describe the music you imagine…",
-            disabled=ChatState.processing,
-            max_length=2000,
-            rows="2",
-            auto_height=True,
-            resize="none",
-            size="3",
-            width="100%",
-            min_height="4rem",
-            max_height="12rem",
-            aria_label="Describe the music you imagine",
-        ),
-        rx.hstack(
-            rx.text("Your prompts are not persisted.", color_scheme="gray", size="1"),
-            rx.spacer(),
-            rx.button(
-                "Send",
-                on_click=ChatState.submit_prompt,
+    """Render the keyboard-friendly message composer."""
+    return rx.form(
+        rx.vstack(
+            rx.text_area(
+                name="prompt",
+                value=ChatState.input_text,
+                on_change=ChatState.set_input_text,
+                placeholder="Describe the music you imagine…",
                 disabled=ChatState.processing,
-                size="2",
-                aria_label="Structure music prompt",
+                enter_key_submit=~ChatState.processing,
+                max_length=2000,
+                rows="2",
+                auto_height=True,
+                resize="none",
+                size="3",
+                width="100%",
+                min_height="4rem",
+                max_height="12rem",
+                aria_label="Describe the music you imagine",
             ),
+            rx.hstack(
+                rx.text(
+                    "Enter to send · Shift+Enter for a new line · prompts are not persisted",
+                    color_scheme="gray",
+                    size="1",
+                ),
+                rx.spacer(),
+                rx.button(
+                    "Send",
+                    type="submit",
+                    disabled=ChatState.processing,
+                    size="2",
+                    aria_label="Structure music prompt",
+                ),
+                width="100%",
+                align="center",
+            ),
+            spacing="2",
             width="100%",
-            align="center",
         ),
-        spacing="2",
+        on_submit=ChatState.submit_form,
         width="100%",
         background="var(--color-panel-solid)",
         border="1px solid var(--gray-5)",
