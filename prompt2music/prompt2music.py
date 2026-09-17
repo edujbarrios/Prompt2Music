@@ -32,36 +32,46 @@ PAGE_META = [
 
 def header() -> rx.Component:
     """Render the compact project header."""
-    return rx.hstack(
-        rx.link(
-            rx.heading("Prompt2Music", size="5", weight="medium"),
-            href="/",
-            color="inherit",
-            text_decoration="none",
-            aria_label="Prompt2Music home",
+    return rx.box(
+        rx.hstack(
+            rx.link(
+                rx.heading("Prompt2Music", size="5", weight="medium"),
+                href="/",
+                color="inherit",
+                text_decoration="none",
+                aria_label="Prompt2Music home",
+            ),
+            rx.spacer(),
+            rx.button(
+                "New chat",
+                variant="ghost",
+                color_scheme="gray",
+                size="1",
+                on_click=ChatState.clear_conversation,
+                disabled=ChatState.processing,
+                aria_label="Clear conversation and start a new chat",
+            ),
+            rx.link("GitHub", href=PROJECT_REPOSITORY, is_external=True, color_scheme="gray"),
+            width="100%",
+            max_width="52rem",
+            padding_x="1.25rem",
+            padding_y="0.9rem",
+            align="center",
+            margin_x="auto",
         ),
-        rx.spacer(),
-        rx.button(
-            "New chat",
-            variant="ghost",
-            color_scheme="gray",
-            size="1",
-            on_click=ChatState.clear_conversation,
-            disabled=ChatState.processing,
-            aria_label="Clear conversation and start a new chat",
-        ),
-        rx.link("GitHub", href=PROJECT_REPOSITORY, is_external=True, color_scheme="gray"),
         width="100%",
-        max_width="52rem",
-        padding_x="1.25rem",
-        padding_y="1rem",
-        align="center",
+        border_bottom="1px solid var(--gray-4)",
+        background="var(--gray-1)",
+        position="sticky",
+        top="0",
+        z_index="20",
     )
 
 
 def intro() -> rx.Component:
-    """Render the concise product introduction and example prompts."""
+    """Render the empty-state product introduction and example prompts."""
     return rx.vstack(
+        rx.text("OPEN SOURCE · NO EXTERNAL AI API", color_scheme="gray", size="1", weight="medium"),
         rx.heading("Turn an idea into a music prompt.", size="7", text_align="center"),
         rx.text(
             "Describe the track you have in mind. Prompt2Music structures the musical "
@@ -89,11 +99,11 @@ def intro() -> rx.Component:
             wrap="wrap",
             justify="center",
             width="100%",
-            padding_top="0.5rem",
+            padding_top="0.75rem",
         ),
         spacing="3",
         align="center",
-        padding_top="8vh",
+        padding_top="10vh",
         padding_bottom="2rem",
     )
 
@@ -110,6 +120,7 @@ def message_bubble(message: dict[str, str]) -> rx.Component:
                 overflow_wrap="anywhere",
                 font_family=rx.cond(is_user, "inherit", "monospace"),
                 size="3",
+                line_height="1.6",
             ),
             rx.cond(
                 message["role"] == "assistant",
@@ -156,6 +167,9 @@ def conversation() -> rx.Component:
         spacing="4",
         align="stretch",
         width="100%",
+        flex="1",
+        padding_top=rx.cond(ChatState.messages.length() == 0, "0", "1.5rem"),
+        padding_bottom="0.5rem",
         role="log",
         aria_live="polite",
         aria_label="Prompt2Music conversation",
@@ -210,6 +224,9 @@ def composer() -> rx.Component:
         border_radius="1rem",
         padding="0.75rem",
         box_shadow="0 8px 30px rgba(0, 0, 0, 0.06)",
+        position="sticky",
+        bottom="1rem",
+        z_index="10",
     )
 
 
@@ -237,14 +254,15 @@ def index() -> rx.Component:
         rx.vstack(
             header(),
             rx.vstack(
-                intro(),
+                rx.cond(ChatState.messages.length() == 0, intro(), rx.fragment()),
                 conversation(),
                 composer(),
                 width="100%",
                 max_width="48rem",
                 padding_x="1.25rem",
-                spacing="5",
+                spacing="4",
                 flex="1",
+                align="stretch",
             ),
             footer(),
             min_height="100vh",
