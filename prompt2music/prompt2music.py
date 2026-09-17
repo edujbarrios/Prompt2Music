@@ -60,7 +60,7 @@ def brand() -> rx.Component:
 
 
 def header() -> rx.Component:
-    """Render the compact project header."""
+    """Render the project header with compact mobile controls."""
     return rx.box(
         rx.hstack(
             rx.link(
@@ -83,7 +83,7 @@ def header() -> rx.Component:
             ),
             rx.link(
                 rx.hstack(
-                    rx.icon("github", size=15),
+                    rx.icon("code", size=15),
                     rx.text("GitHub", display=["none", "block"]),
                     spacing="1",
                     align="center",
@@ -92,22 +92,22 @@ def header() -> rx.Component:
                 is_external=True,
                 color_scheme="gray",
                 text_decoration="none",
-                padding="0.35rem 0.5rem",
-                border_radius="0.55rem",
+                padding="0.4rem 0.55rem",
+                border_radius="0.6rem",
                 aria_label="Open Prompt2Music on GitHub",
                 _hover={"background": "var(--gray-3)"},
             ),
             width="100%",
-            max_width="58rem",
-            padding_x=["0.8rem", "1.25rem"],
+            max_width="72rem",
+            padding_x=["0.8rem", "1.25rem", "1.75rem"],
             padding_y=["0.65rem", "0.8rem"],
-            gap=["0.25rem", "0.5rem"],
+            gap=["0.2rem", "0.5rem"],
             align="center",
             margin_x="auto",
         ),
         width="100%",
         border_bottom="1px solid rgba(0, 0, 0, 0.06)",
-        background="rgba(250, 250, 250, 0.86)",
+        background="rgba(250, 250, 250, 0.88)",
         backdrop_filter="blur(18px) saturate(1.2)",
         position="sticky",
         top="0",
@@ -115,97 +115,133 @@ def header() -> rx.Component:
     )
 
 
-def intro() -> rx.Component:
-    """Render the empty-state product introduction and example prompts."""
+def trust_row() -> rx.Component:
+    """Render compact product promises."""
+    return rx.flex(
+        rx.badge("Open source", variant="soft", color_scheme="gray", radius="full"),
+        rx.badge("No coding", variant="soft", color_scheme="gray", radius="full"),
+        rx.badge("No prompt storage", variant="soft", color_scheme="gray", radius="full"),
+        gap="0.5rem",
+        flex_wrap="wrap",
+        justify="center",
+    )
+
+
+def examples_panel() -> rx.Component:
+    """Render examples as a distinct panel on desktop and a full-width card on mobile."""
     return rx.vstack(
         rx.hstack(
-            rx.badge("Open source", variant="soft", color_scheme="gray", radius="full"),
-            rx.badge("No coding required", variant="soft", color_scheme="gray", radius="full"),
-            spacing="2",
-            justify="center",
-            flex_wrap="wrap",
-        ),
-        rx.heading(
-            "Turn a musical idea into a structured prompt.",
-            size="8",
-            text_align="center",
-            font_size=["2.2rem", "3rem", "3.8rem"],
-            line_height=["1.08", "1.04"],
-            letter_spacing="-0.035em",
-            max_width="48rem",
-            weight="medium",
-        ),
-        rx.text(
-            "Describe the track you imagine in plain language. Prompt2Music turns it into a "
-            "clear, structured music prompt using the open-source engine by Eduardo J. Barrios.",
-            color_scheme="gray",
-            size="3",
-            text_align="center",
-            max_width="40rem",
-            line_height="1.65",
-        ),
-        rx.vstack(
-            rx.text(
-                "Try an example",
-                color_scheme="gray",
-                size="1",
-                weight="medium",
-                letter_spacing="0.04em",
-                text_transform="uppercase",
+            rx.center(
+                rx.icon("sparkles", size=14),
+                width="1.8rem",
+                height="1.8rem",
+                border_radius="0.55rem",
+                background="var(--gray-3)",
             ),
-            rx.flex(
-                *[
-                    rx.button(
-                        rx.icon("sparkles", size=14),
-                        example,
-                        variant="soft",
-                        color_scheme="gray",
-                        size="1",
-                        on_click=ChatState.use_example(example),
-                        white_space="normal",
-                        height="auto",
-                        min_height="2.8rem",
-                        width=["100%", "auto"],
-                        text_align="left",
-                        justify_content="flex-start",
-                        cursor="pointer",
-                        padding="0.65rem 0.8rem",
-                        border="1px solid var(--gray-4)",
-                        background="rgba(255, 255, 255, 0.72)",
-                        style={
-                            "transition": "transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease",
-                            "_hover": {
-                                "transform": "translateY(-2px)",
-                                "box_shadow": "0 8px 22px rgba(0, 0, 0, 0.07)",
-                                "border_color": "var(--gray-6)",
-                            },
-                        },
-                    )
-                    for example in EXAMPLE_PROMPTS
-                ],
-                gap="0.65rem",
-                flex_direction=["column", "row"],
-                align_items="stretch",
-                justify_content=["stretch", "center"],
-                flex_wrap="wrap",
-                width="100%",
-                max_width="50rem",
+            rx.vstack(
+                rx.text("Need inspiration?", size="2", weight="medium"),
+                rx.text("Start from an example and edit it.", size="1", color_scheme="gray"),
+                spacing="1",
+                align="start",
             ),
             spacing="2",
             align="center",
             width="100%",
-            padding_top="0.75rem",
         ),
-        spacing="4",
-        align="center",
+        *[
+            rx.button(
+                rx.text(example, size="2", line_height="1.45"),
+                variant="ghost",
+                color_scheme="gray",
+                on_click=ChatState.use_example(example),
+                white_space="normal",
+                height="auto",
+                min_height="3.15rem",
+                width="100%",
+                text_align="left",
+                justify_content="flex-start",
+                cursor="pointer",
+                padding="0.75rem 0.8rem",
+                border="1px solid var(--gray-4)",
+                background="rgba(255, 255, 255, 0.7)",
+                style={
+                    "transition": "transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease",
+                    "_hover": {
+                        "transform": "translateY(-1px)",
+                        "box_shadow": "0 8px 22px rgba(0, 0, 0, 0.06)",
+                        "border_color": "var(--gray-6)",
+                    },
+                },
+            )
+            for example in EXAMPLE_PROMPTS
+        ],
+        spacing="2",
+        align="stretch",
         width="100%",
-        padding_top=["3.5rem", "8vh", "11vh"],
-        padding_bottom=["1.5rem", "2.5rem"],
+        max_width=["100%", "100%", "23rem"],
+        padding=["0.8rem", "0.9rem", "1rem"],
+        border="1px solid var(--gray-4)",
+        border_radius="1.15rem",
+        background="rgba(255,255,255,0.64)",
+        box_shadow="0 16px 42px rgba(0, 0, 0, 0.045)",
+        backdrop_filter="blur(10px)",
+    )
+
+
+def intro() -> rx.Component:
+    """Render a mobile-first hero that expands into a balanced desktop composition."""
+    return rx.flex(
+        rx.vstack(
+            trust_row(),
+            rx.heading(
+                "Turn a musical idea into a structured prompt.",
+                size="8",
+                text_align=["center", "center", "left"],
+                font_size=["2.15rem", "3rem", "4.15rem"],
+                line_height=["1.08", "1.04", "1.01"],
+                letter_spacing="-0.04em",
+                max_width="46rem",
+                weight="medium",
+            ),
+            rx.text(
+                "Describe the track you imagine in plain language. Prompt2Music turns it into a "
+                "clear, structured music prompt using the open-source engine by Eduardo J. Barrios.",
+                color_scheme="gray",
+                size="3",
+                text_align=["center", "center", "left"],
+                max_width="39rem",
+                line_height="1.7",
+            ),
+            rx.hstack(
+                rx.icon("circle-check", size=14, color="var(--gray-9)"),
+                rx.text(
+                    "Made for non-technical users — no setup, terminal, or programming required.",
+                    size="2",
+                    color_scheme="gray",
+                ),
+                spacing="2",
+                align="center",
+                max_width="39rem",
+            ),
+            spacing="4",
+            align="center",
+            width="100%",
+            flex="1",
+        ),
+        examples_panel(),
+        width="100%",
+        max_width="68rem",
+        flex_direction=["column", "column", "row"],
+        align_items="center",
+        justify_content="space-between",
+        gap=["1.5rem", "2rem", "4rem"],
+        padding_top=["2.75rem", "6vh", "9vh"],
+        padding_bottom=["1.5rem", "2.25rem", "3rem"],
     )
 
 
 def message_bubble(message: dict[str, str]) -> rx.Component:
-    """Render one user or assistant message."""
+    """Render one user or assistant message with stronger desktop hierarchy."""
     is_user = message["role"] == "user"
 
     return rx.box(
@@ -213,8 +249,8 @@ def message_bubble(message: dict[str, str]) -> rx.Component:
             rx.hstack(
                 rx.center(
                     rx.icon(rx.cond(is_user, "user", "audio-lines"), size=12),
-                    width="1.45rem",
-                    height="1.45rem",
+                    width="1.5rem",
+                    height="1.5rem",
                     border_radius="0.45rem",
                     background=rx.cond(is_user, "var(--gray-5)", "var(--gray-12)"),
                     color=rx.cond(is_user, "var(--gray-12)", "var(--gray-1)"),
@@ -236,7 +272,7 @@ def message_bubble(message: dict[str, str]) -> rx.Component:
                 overflow_wrap="anywhere",
                 font_family=rx.cond(is_user, "inherit", "monospace"),
                 size="3",
-                line_height="1.65",
+                line_height="1.68",
                 width="100%",
             ),
             rx.cond(
@@ -260,12 +296,12 @@ def message_bubble(message: dict[str, str]) -> rx.Component:
             align="stretch",
             width="100%",
         ),
-        background=rx.cond(is_user, "rgba(238, 238, 238, 0.82)", "rgba(255, 255, 255, 0.9)"),
+        background=rx.cond(is_user, "rgba(238, 238, 238, 0.86)", "rgba(255, 255, 255, 0.94)"),
         border="1px solid var(--gray-5)",
         border_radius=["1rem", "1.15rem"],
-        padding=["0.9rem", "1.05rem 1.15rem"],
-        box_shadow=rx.cond(is_user, "none", "0 8px 28px rgba(0, 0, 0, 0.045)"),
-        max_width=rx.cond(is_user, "88%", "96%"),
+        padding=["0.9rem", "1.05rem 1.2rem", "1.15rem 1.3rem"],
+        box_shadow=rx.cond(is_user, "none", "0 10px 32px rgba(0, 0, 0, 0.045)"),
+        max_width=rx.cond(is_user, "44rem", "58rem"),
         align_self=rx.cond(is_user, "flex-end", "flex-start"),
     )
 
@@ -282,7 +318,7 @@ def conversation() -> rx.Component:
                 spacing="2",
                 align="center",
                 align_self="flex-start",
-                padding="0.3rem 0.2rem",
+                padding="0.35rem 0.25rem",
                 role="status",
                 aria_live="polite",
             ),
@@ -292,7 +328,7 @@ def conversation() -> rx.Component:
         align="stretch",
         width="100%",
         flex="1",
-        padding_top=rx.cond(ChatState.messages.length() == 0, "0", "1.5rem"),
+        padding_top=rx.cond(ChatState.messages.length() == 0, "0", "1.75rem"),
         padding_bottom=["0.4rem", "0.75rem"],
         role="log",
         aria_live="polite",
@@ -301,7 +337,7 @@ def conversation() -> rx.Component:
 
 
 def composer() -> rx.Component:
-    """Render the keyboard-friendly message composer."""
+    """Render a compact mobile composer and floating desktop composer."""
     input_is_empty = ChatState.input_text == ""
 
     return rx.form(
@@ -309,6 +345,8 @@ def composer() -> rx.Component:
             rx.hstack(
                 rx.icon("music", size=14, color="var(--gray-9)"),
                 rx.text("Describe your track", size="1", weight="medium", color_scheme="gray"),
+                rx.spacer(),
+                rx.text("2000 chars max", size="1", color_scheme="gray", display=["none", "block"]),
                 spacing="2",
                 align="center",
                 width="100%",
@@ -326,7 +364,7 @@ def composer() -> rx.Component:
                 resize="none",
                 size="3",
                 width="100%",
-                min_height=["4rem", "4.4rem"],
+                min_height=["3.8rem", "4.4rem"],
                 max_height="12rem",
                 aria_label="Describe the music you imagine",
                 background="var(--gray-2)",
@@ -334,7 +372,7 @@ def composer() -> rx.Component:
             rx.hstack(
                 rx.box(
                     rx.text(
-                        "Not persisted · no external AI API",
+                        "Private in this MVP · no external AI API",
                         color_scheme="gray",
                         size="1",
                         line_height="1.35",
@@ -351,17 +389,13 @@ def composer() -> rx.Component:
                     min_width="0",
                 ),
                 rx.button(
-                    rx.cond(
-                        ChatState.processing,
-                        rx.fragment(),
-                        rx.icon("arrow-up", size=15),
-                    ),
-                    "Send",
+                    rx.cond(ChatState.processing, rx.fragment(), rx.icon("arrow-up", size=15)),
+                    rx.text("Send", display=["none", "block"]),
                     type="submit",
                     disabled=ChatState.processing | input_is_empty,
                     loading=ChatState.processing,
                     size="2",
-                    min_width="5.3rem",
+                    min_width=["2.6rem", "5.3rem"],
                     radius="full",
                     high_contrast=True,
                     aria_label="Structure music prompt",
@@ -375,14 +409,14 @@ def composer() -> rx.Component:
         ),
         on_submit=ChatState.submit_form,
         width="100%",
-        background="rgba(255, 255, 255, 0.93)",
+        background="rgba(255, 255, 255, 0.95)",
         backdrop_filter="blur(14px)",
         border="1px solid var(--gray-5)",
         border_radius=["1rem 1rem 0 0", "1.15rem"],
-        padding=["0.7rem 0.7rem max(0.7rem, env(safe-area-inset-bottom))", "0.85rem"],
-        box_shadow="0 16px 46px rgba(0, 0, 0, 0.09)",
+        padding=["0.65rem 0.7rem max(0.65rem, env(safe-area-inset-bottom))", "0.85rem", "0.95rem"],
+        box_shadow="0 16px 48px rgba(0, 0, 0, 0.09)",
         position="sticky",
-        bottom=["0", "1rem"],
+        bottom=["0", "1rem", "1.25rem"],
         z_index="10",
     )
 
@@ -402,7 +436,7 @@ def footer() -> rx.Component:
         justify="center",
         width="100%",
         padding_x="1rem",
-        padding_y=["1.1rem", "1.5rem"],
+        padding_y=["1rem", "1.5rem"],
         text_align="center",
         opacity="0.82",
     )
@@ -418,8 +452,8 @@ def index() -> rx.Component:
                 conversation(),
                 composer(),
                 width="100%",
-                max_width="54rem",
-                padding_x=["0.75rem", "1.25rem"],
+                max_width="64rem",
+                padding_x=["0.65rem", "1.25rem", "1.75rem"],
                 spacing="4",
                 flex="1",
                 align="stretch",
@@ -431,8 +465,8 @@ def index() -> rx.Component:
             spacing="0",
         ),
         background=(
-            "radial-gradient(circle at 50% 8%, rgba(255,255,255,0.98) 0%, "
-            "rgba(247,247,247,0.94) 34%, var(--gray-1) 68%)"
+            "radial-gradient(circle at 50% 4%, rgba(255,255,255,0.99) 0%, "
+            "rgba(247,247,247,0.95) 36%, var(--gray-1) 72%)"
         ),
         color="var(--gray-12)",
         min_height="100dvh",
