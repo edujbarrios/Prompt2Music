@@ -1,10 +1,14 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "prompt2music"
 version = "0.1.0"
 description = "Open-source Reflex web interface for structuring text-to-music prompts."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MPL-2.0" }
+license = "MPL-2.0"
 authors = [
   { name = "Eduardo J. Barrios" }
 ]
@@ -18,6 +22,10 @@ dev = [
   "pytest>=8,<9",
   "ruff>=0.12,<1",
 ]
+
+[tool.setuptools.packages.find]
+include = ["prompt2music*"]
+exclude = ["assets*", "tests*"]
 
 [tool.ruff]
 target-version = "py310"
