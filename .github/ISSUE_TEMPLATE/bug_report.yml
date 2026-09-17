@@ -1,0 +1,52 @@
+name: Bug report
+description: Report a reproducible problem in Prompt2Music
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Prompt2Music. Please do not use this form for security vulnerabilities; follow SECURITY.md instead.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Enter ...
+        3. Click ...
+        4. See ...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, OS, Python/Reflex version, or deployed URL when relevant.
+      placeholder: "Firefox 142, macOS 15 / Reflex 0.9.x"
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Example prompt
+      description: If the bug depends on input text, provide a minimal non-sensitive example.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Add screenshots, logs, or other useful context. Remove secrets and personal data first.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
