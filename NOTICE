@@ -1,0 +1,9 @@
+Prompt2Music
+Copyright 2026 Eduardo J. Barrios
+
+This project is licensed under the Mozilla Public License, version 2.0.
+The complete license text is provided in the LICENSE file.
+
+Prompt2Music uses text-to-music-prompt-structurer as its backend / structuring engine.
+That library is a separate open-source project created and maintained by Eduardo J. Barrios (@edujbarrios):
+https://github.com/edujbarrios/text-to-music-prompt-structurer
