@@ -1,4 +1,9 @@
-from prompt2music.prompt2music import BACKEND_REPOSITORY, PROJECT_REPOSITORY, app
+from prompt2music.prompt2music import (
+    BACKEND_REPOSITORY,
+    PROJECT_REPOSITORY,
+    app,
+    index,
+)
 
 
 def test_project_links_point_to_edujbarrios_repositories() -> None:
@@ -8,3 +13,7 @@ def test_project_links_point_to_edujbarrios_repositories() -> None:
 
 def test_reflex_app_is_created() -> None:
     assert app is not None
+
+
+def test_index_component_builds() -> None:
+    assert index() is not None
