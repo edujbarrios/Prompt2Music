@@ -4,7 +4,7 @@ Prompt2Music is an open-source web interface for turning free-form musical ideas
 
 The project is being built with [Reflex](https://reflex.dev/) as a small, public, chat-style application written primarily in Python.
 
-> **Project status:** early development. The current branch establishes the Reflex and open-source baseline; the interactive prompt structuring flow will be added incrementally through pull requests.
+> **Project status:** early development. The Reflex baseline and backend integration are in place; the conversational UI is being added incrementally through pull requests.
 
 ## Backend
 
@@ -12,7 +12,17 @@ Prompt2Music is powered by [`text-to-music-prompt-structurer`](https://github.co
 
 The library provides the musical analysis and prompt structuring engine used by this application. **Prompt2Music is the web interface; `text-to-music-prompt-structurer` is the backend / structuring engine.**
 
-Prompt2Music does not duplicate the engine logic. The application will use the library directly as a Python dependency so improvements to the structuring engine remain centralized in the backend project.
+Prompt2Music does not duplicate the engine logic. The application uses the library directly as a Python dependency so improvements to the structuring engine remain centralized in the backend project.
+
+The integration is intentionally thin:
+
+```python
+from text_to_music_prompt_structurer import MusicPromptEngine, format_prompt
+
+engine = MusicPromptEngine()
+prompt = engine.process(user_text)
+result = format_prompt(prompt)
+```
 
 ## Intended experience
 
@@ -30,7 +40,7 @@ No external AI provider is required for the core transformation.
 
 - Python 3.10+
 - Reflex
-- `text-to-music-prompt-structurer` as the structuring backend (integration follows in the next development slice)
+- `text-to-music-prompt-structurer` as the structuring backend
 - pytest for tests
 - Ruff for linting
 
@@ -53,7 +63,9 @@ The development frontend is normally available at `http://localhost:3000`.
 Prompt2Music/
 ├── prompt2music/
 │   ├── __init__.py
+│   ├── backend.py
 │   └── prompt2music.py
+├── tests/
 ├── rxconfig.py
 ├── pyproject.toml
 ├── requirements.txt
@@ -67,7 +79,7 @@ The codebase will stay intentionally small. Prompt parsing and musical detection
 
 ## Privacy direction
 
-The MVP is designed not to persist conversations and not to send prompts to third-party AI services. Prompt transformation will happen through the Python backend library.
+The MVP is designed not to persist conversations and not to send prompts to third-party AI services. Prompt transformation happens through the local Python backend library.
 
 ## Open source
 
