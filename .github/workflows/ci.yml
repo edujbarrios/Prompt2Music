@@ -26,3 +26,6 @@ jobs:
 
       - name: Pytest
         run: pytest
+
+      - name: Compile Reflex app
+        run: reflex compile

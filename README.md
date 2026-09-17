@@ -4,7 +4,7 @@ Prompt2Music is an open-source web interface for turning free-form musical ideas
 
 The project is built with [Reflex](https://reflex.dev/) as a small, public, chat-style application written primarily in Python.
 
-> **Project status:** MVP. The chat flow, backend integration, copy action, keyboard submission, examples, tests, and CI are in place. Deployment/polish can continue incrementally through pull requests.
+> **Project status:** MVP. The chat flow, backend integration, copy action, keyboard submission, examples, public metadata, tests, CI, and production container setup are in place.
 
 ## Backend
 
@@ -49,6 +49,7 @@ No external AI provider is required for the core transformation.
 - pytest for tests
 - Ruff for linting
 - GitHub Actions for CI
+- Caddy + Redis in the optional production container
 
 ## Local development
 
@@ -68,7 +69,47 @@ Before opening a pull request:
 ```bash
 uv run ruff check .
 uv run pytest
+uv run reflex compile
 ```
+
+## Production
+
+Reflex can run the application directly in production mode:
+
+```bash
+reflex run --env prod
+```
+
+Prompt2Music also includes a production `Dockerfile` based on Reflex's single-container deployment pattern. The container builds the optimized frontend, serves static assets through Caddy, and proxies Reflex backend routes to the Python service.
+
+Build the image:
+
+```bash
+docker build -t prompt2music .
+```
+
+Run it locally on port `8080`:
+
+```bash
+docker run --rm -p 8080:8080 prompt2music
+```
+
+For a platform that expects another port, pass the build argument:
+
+```bash
+docker build --build-arg PORT=10000 -t prompt2music .
+docker run --rm -p 10000:10000 prompt2music
+```
+
+When a deployment serves the frontend and backend from the same HTTPS origin, no external API URL is required. If they are hosted separately, build with an explicit `API_URL`:
+
+```bash
+docker build \
+  --build-arg API_URL=https://api.example.com \
+  -t prompt2music .
+```
+
+The app remains provider agnostic. It can also be deployed through Reflex Cloud using the standard `reflex deploy` workflow.
 
 ## Project structure
 
@@ -77,12 +118,17 @@ Prompt2Music/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
+├── assets/
+│   ├── favicon.svg
+│   └── robots.txt
 ├── prompt2music/
 │   ├── __init__.py
 │   ├── backend.py
 │   ├── prompt2music.py
 │   └── state.py
 ├── tests/
+├── Caddyfile
+├── Dockerfile
 ├── rxconfig.py
 ├── pyproject.toml
 ├── requirements.txt
