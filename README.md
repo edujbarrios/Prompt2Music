@@ -4,7 +4,7 @@ Prompt2Music is an open-source web interface for turning free-form musical ideas
 
 The project is built with [Reflex](https://reflex.dev/) as a small, public, chat-style application written primarily in Python.
 
-> **Project status:** MVP. The chat flow, backend integration, copy action, keyboard submission, examples, public metadata, tests, CI, and production container setup are in place.
+> **Project status:** MVP. The chat flow, backend integration, copy action, keyboard submission, examples, public metadata, tests, CI, production container setup, and Vercel container runtime are in place.
 
 ## Backend
 
@@ -49,7 +49,8 @@ No external AI provider is required for the core transformation.
 - pytest for tests
 - Ruff for linting
 - GitHub Actions for CI
-- Caddy + Redis in the optional production container
+- Caddy for the production/Vercel reverse proxy
+- Docker / Vercel Fluid Compute for container deployment
 
 ## Local development
 
@@ -72,7 +73,31 @@ uv run pytest
 uv run reflex compile
 ```
 
-## Production
+## Deploy to Vercel
+
+Prompt2Music includes a dedicated `Dockerfile.vercel`. Vercel can build this file as a container-backed Function on Fluid Compute and expose the Reflex frontend, backend HTTP routes, and event WebSocket through one deployment.
+
+Import this GitHub repository into Vercel and keep the repository root as the project root. Vercel should automatically detect `Dockerfile.vercel`.
+
+No external AI API keys, database, or persistent storage are required for the MVP.
+
+The Vercel runtime uses:
+
+```text
+Vercel HTTPS / WebSocket
+        |
+        v
+     Caddy
+      /  \
+frontend  Reflex backend
+              |
+              v
+text-to-music-prompt-structurer
+```
+
+Full deployment notes, local container commands, scaling details, and the health endpoint are documented in [`docs/VERCEL.md`](docs/VERCEL.md).
+
+## Other production deployments
 
 Reflex can run the application directly in production mode:
 
@@ -80,7 +105,7 @@ Reflex can run the application directly in production mode:
 reflex run --env prod
 ```
 
-Prompt2Music also includes a production `Dockerfile` based on Reflex's single-container deployment pattern. The container builds the optimized frontend, serves static assets through Caddy, and proxies Reflex backend routes to the Python service.
+Prompt2Music also includes a provider-agnostic production `Dockerfile` based on Reflex's container deployment pattern.
 
 Build the image:
 
@@ -109,7 +134,7 @@ docker build \
   -t prompt2music .
 ```
 
-The app remains provider agnostic. It can also be deployed through Reflex Cloud using the standard `reflex deploy` workflow.
+The app remains provider agnostic and can also be deployed through Reflex Cloud.
 
 ## Project structure
 
@@ -121,6 +146,8 @@ Prompt2Music/
 ├── assets/
 │   ├── favicon.svg
 │   └── robots.txt
+├── docs/
+│   └── VERCEL.md
 ├── prompt2music/
 │   ├── __init__.py
 │   ├── backend.py
@@ -128,13 +155,16 @@ Prompt2Music/
 │   └── state.py
 ├── tests/
 ├── Caddyfile
+├── Caddyfile.vercel
 ├── Dockerfile
+├── Dockerfile.vercel
 ├── rxconfig.py
 ├── pyproject.toml
 ├── requirements.txt
 ├── CONTRIBUTING.md
 ├── CODE_OF_CONDUCT.md
 ├── LICENSE
+├── NOTICE
 └── README.md
 ```
 
