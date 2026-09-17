@@ -1,32 +1,24 @@
 # Prompt2Music
 
-Prompt2Music is an open-source web app that turns free-form musical ideas into structured text-to-music prompts.
+Open-source web app for turning free-form musical ideas into structured text-to-music prompts.
 
-## Backend
+**Website:** https://prompt2music.vercel.app
 
-Prompt2Music is the **web interface**. The prompt structuring engine is [`text-to-music-prompt-structurer`](https://github.com/edujbarrios/text-to-music-prompt-structurer), an open-source Python library created and maintained by **Eduardo J. Barrios (@edujbarrios)**.
+## How it works
 
-The application uses the library directly and does not duplicate its musical parsing logic:
+Prompt2Music is the **web interface**. Prompt structuring is provided by [`text-to-music-prompt-structurer`](https://github.com/edujbarrios/text-to-music-prompt-structurer), an open-source Python library created and maintained by **Eduardo J. Barrios (@edujbarrios)**.
 
-```python
-from text_to_music_prompt_structurer import MusicPromptEngine, format_prompt
-
-engine = MusicPromptEngine()
-result = format_prompt(engine.process(user_text))
-```
-
-No external AI provider is required for the core transformation.
+The app uses the library directly through `MusicPromptEngine` and `format_prompt`; it does not duplicate the parsing logic and does not require an external AI provider.
 
 ## Features
 
 - Chat-style interface built with Reflex
-- Structured prompt generation through `text-to-music-prompt-structurer`
-- Copy-to-clipboard responses
-- Keyboard submission and example prompts
-- Responsive and accessible UI
+- Structured music prompts from natural-language descriptions
+- Copy-to-clipboard output
+- Keyboard-friendly and responsive UI
 - No persisted conversations in the MVP
 
-## Local development
+## Run locally
 
 ```bash
 git clone https://github.com/edujbarrios/Prompt2Music.git
@@ -35,7 +27,7 @@ uv sync --extra dev
 uv run reflex run
 ```
 
-Before opening a pull request:
+Quality checks:
 
 ```bash
 uv run ruff check .
@@ -43,22 +35,12 @@ uv run pytest
 uv run reflex compile
 ```
 
-## Privacy
+## Contributing
 
-Prompt2Music does not persist conversations in the MVP and does not send prompts to third-party AI services. Prompt transformation is performed by the Python backend library.
-
-## Open source
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 
 Prompt2Music is licensed under the **Mozilla Public License 2.0 (MPL-2.0)**.
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+## Project scope
 
-## Independence notice
-
-Prompt2Music is an independent open-source project. It is not affiliated with, endorsed by, or connected to Suno, Udio, or any other text-to-music platform.
-
-## Author
-
-Created by **Eduardo J. Barrios (@edujbarrios)**.
-
-Backend library: https://github.com/edujbarrios/text-to-music-prompt-structurer
+Prompt2Music is an independent open-source project. It is not affiliated with or endorsed by any text-to-music platform.
