@@ -19,7 +19,7 @@ class ChatState(rx.State):
     """Per-user state for the Prompt2Music chat experience."""
 
     input_text: str = ""
-    messages: list[ChatMessage] = []
+    messages: list[ChatMessage] = []  # noqa: RUF012 - Reflex state var declaration.
     processing: bool = False
     error: str = ""
 
